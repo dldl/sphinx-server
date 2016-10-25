@@ -36,7 +36,7 @@ docker run -itd -v "$(pwd)":/web -p 8000:8000 --name documentation-server docume
 The web server will be listening on `8000` port. Of course, you can change it to your
 needs. All the files in the current directory will be mount in the container.
 
-**Developement mode:**
+**Development mode:**
 
 ```sh
 docker run -itd -v "$(pwd)":/web -p 35729:35729 -p 8000:8000 -e ENV=dev --name documentation-server documentation-image
