@@ -1,7 +1,18 @@
 # Docker-Sphinx
 
-Docker-Sphinx allows you to build Sphinx documentation using a lightweight docker
+Docker-Sphinx allows you to build Sphinx documentation using a Docker
 image based on Alpine.
+
+**Functionnalities:**
+
+- UML support with PlantUML
+- dot support with Graphviz
+- Autobuild with sphinx-autobuild
+
+**Limitations:**
+
+- This image is not bundled with latex but you can generate *.tex* files
+- Authentication cannot be disabled for now
 
 ## Installation
 
@@ -23,7 +34,7 @@ docker build -t documentation-image .
 ```
 
 Once the image is built, you can run the documentation in development or production
-mode using one of the following commands :
+mode using one of the following aa :
 
 ### Container creation
 
