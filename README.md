@@ -39,7 +39,8 @@ docker build -t dldl/docker-sphinx .
 ## Usage
 
 Add a *.credentials* file at the root of your project following the
-`username:password` syntax.
+`username:password` syntax to enable HTTP authentication to restrict access to
+the documentation.
 
 ### Container creation
 
