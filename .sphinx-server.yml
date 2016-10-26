@@ -1,0 +1,6 @@
+autobuild: false
+credentials:
+  password: ~
+  username: ~
+ignore:
+  - .git/

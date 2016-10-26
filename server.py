@@ -5,13 +5,15 @@ from contextlib import contextmanager
 import base64
 from livereload import Server
 import BaseHTTPServer
-from SimpleHTTPServer  import SimpleHTTPRequestHandler
+import SimpleHTTPServer
+import SocketServer
+import yaml
 
-key = ""
-auth_file = '.credentials'
-build_folder = "_build/html"
 
-class AuthHandler(SimpleHTTPRequestHandler):
+class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+    """
+    Authentication handler used to support HTTP authentication
+    """
     def do_HEAD(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -25,81 +27,76 @@ class AuthHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         global key
-        if self.headers.getheader('Authorization') == None:
+        if self.headers.getheader('Authorization') is None:
             self.do_AUTHHEAD()
             self.wfile.write('Credentials required.')
             pass
-        elif self.headers.getheader('Authorization') == 'Basic '+key:
-            SimpleHTTPRequestHandler.do_GET(self)
+        elif self.headers.getheader('Authorization') == 'Basic ' + key:
+            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
             pass
         else:
             self.do_AUTHHEAD()
             self.wfile.write('Credentials required.')
             pass
 
-def test(HandlerClass = AuthHandler,
-         ServerClass = BaseHTTPServer.HTTPServer):
-    BaseHTTPServer.test(HandlerClass, ServerClass)
-
-
+'''
+This function is used to simulate the manipulation of the stack (like pushd and popd in BASH)
+and change the folder with the usage of the context manager
+'''
 @contextmanager
-def pushd(newDir):
-    previousDir = os.getcwd()
-    os.chdir(newDir)
+def pushd(new_dir):
+    previous_dir = os.getcwd()
+    os.chdir(new_dir)
     yield
-    os.chdir(previousDir)
-
-if __name__ == "__main__":
-
-    source_dir = os.path.realpath(".")
-    dest_dir = os.path.realpath(build_folder)
+    os.chdir(previous_dir)
 
 
-    if os.environ.get("ENV") is not None :
+if __name__ == '__main__':
 
-        ignored_files = []
+    key = ''
+    config_file = '.sphinx-server.yml'
+    build_folder = os.path.realpath('_build/html')
+    source_folder = os.path.realpath('.')
+    configuration = None
 
-        with open(".gitignore", "r") as ins:
-            for line in ins:
-                ignored_files.append(os.path.abspath(line.rstrip()))
+    with open(config_file, 'r') as config_stream:
+        configuration = yaml.load(config_stream)
 
-            ins.close()
+        if os.path.isfile(source_folder + '/' + config_file):
+            with open(source_folder + '/' + config_file, "r") as custom_stream:
+                configuration.update(yaml.load(custom_stream))
 
-        builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder,
-                                                 args=["-b","html",source_dir,dest_dir],
-                                                 ignored=ignored_files)
-        server = Server(
-            watcher=sphinx_autobuild.LivereloadWatchdogWatcher(),
+    if not os.path.exists(build_folder):
+        os.makedirs(build_folder)
+
+    if configuration.get('autobuild'):
+        builder = sphinx_autobuild.SphinxBuilder(
+            outdir=build_folder,
+            args=['-b', 'html', source_folder, build_folder],
+            ignored=configuration.get('ignore')
         )
 
-        server.watch(source_dir, builder)
-
-        if not os.path.exists(dest_dir):
-            os.makedirs(dest_dir)
-
-        server.watch(dest_dir)
+        server = Server(watcher=sphinx_autobuild.LivereloadWatchdogWatcher())
+        server.watch(source_folder, builder)
+        server.watch(build_folder)
 
         builder.build()
 
-        server.serve(port=8000, host='0.0.0.0', root=dest_dir)
-
+        server.serve(port=8000, host='0.0.0.0', root=build_folder)
     else:
-        builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder,
-                                                 args=["-b","html",source_dir,dest_dir])
-
-
-        if not os.path.exists(dest_dir):
-            os.makedirs(dest_dir)
-
+        # Building once when server starts
+        builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder, args=['-b', 'html', source_folder, build_folder])
         builder.build()
 
-        sys.argv = ["nouser", "8000"]
-        auth = ""
+        sys.argv = ['nouser', '8000']
 
-        with open(auth_file) as f:
-            auth = f.readlines()
-            auth = auth[0].rstrip()
+        if configuration.get('credentials')['username'] is not None:
+            auth = configuration.get('credentials')['username'] + ':' + configuration.get('credentials')['password']
+            key = base64.b64encode(auth)
 
-        key = base64.b64encode(auth)
-        with pushd(dest_dir):
-            test()
+            with pushd(build_folder):
+                BaseHTTPServer.test(AuthHandler, BaseHTTPServer.HTTPServer)
+        else:
+            Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+            httpd = SocketServer.TCPServer(('', 8000), Handler)
+            httpd.serve_forever()
