@@ -1,0 +1,7 @@
+Config:
+  autobuild: false
+  credentials:
+    password: Test
+    username: essai
+  ignore:
+    - .git/

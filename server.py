@@ -7,10 +7,12 @@ from livereload import Server
 import BaseHTTPServer
 import SimpleHTTPServer
 import SocketServer
+import yaml
 
 key = ""
-auth_file = '.credentials'
+config_file = '.sphinx-server.yml'
 build_folder = "_build/html"
+default_v = ""
 
 class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_HEAD(self):
@@ -43,6 +45,14 @@ def test(HandlerClass = AuthHandler,
                 BaseHTTPServer.test(HandlerClass, ServerClass)
 
 
+class Config(yaml.YAMLObject):
+  yaml_tag = '!config'
+
+  def __init__(self, autobuild,credentials,ignore):
+    self.autobuild = autobuild
+    self.credentials = credentials
+    self.ignore = ignore
+
 
 
 @contextmanager
@@ -58,15 +68,32 @@ if __name__ == "__main__":
     dest_dir = os.path.realpath(build_folder)
 
 
-    if os.environ.get("ENV") is not None :
+    yaml.add_path_resolver('!config', ['Config'], dict)
 
-        ignored_files = []
 
-        with open(".gitignore", "r") as ins:
-            for line in ins:
-                ignored_files.append(os.path.abspath(line.rstrip()))
+    with open(config_file,"r") as stream :
+        try:
+            default_v = yaml.load(stream)
 
-            ins.close()
+            if os.path.isfile("/web/"+config_file):
+                with open("/web/"+config_file,"r") as new_stream :
+                    try:
+                        new_v = yaml.load(new_stream)
+
+                        default_v.update(new_v)
+
+
+                    except yaml.YAMLError as exc:
+                        print(exc)
+
+            print default_v
+
+        except yaml.YAMLError as exc:
+            print(exc)
+
+    if default_v['Config'].autobuild :
+
+        ignored_files = default_v['Config'].ignore
 
         builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder,
                                                  args=["-b","html",source_dir,dest_dir],
@@ -97,17 +124,17 @@ if __name__ == "__main__":
         builder.build()
 
         sys.argv = ["nouser", "8000"]
-        auth = ""
 
-        if os.path.isfile(auth_file) :
-            with open(auth_file) as f:
-                auth = f.readlines()
-                auth = auth[0].rstrip()
+        if default_v['Config'].credentials["username"] is not None :
+
+            auth = default_v['Config'].credentials["username"]+":"+default_v['Config'].credentials["password"]
 
             key = base64.b64encode(auth)
             with pushd(dest_dir):
                 test()
+
         else:
+
             Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
             httpd = SocketServer.TCPServer(("", 8000), Handler)
             httpd.serve_forever()
