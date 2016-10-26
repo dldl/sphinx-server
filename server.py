@@ -5,13 +5,14 @@ from contextlib import contextmanager
 import base64
 from livereload import Server
 import BaseHTTPServer
-from SimpleHTTPServer  import SimpleHTTPRequestHandler
+import SimpleHTTPServer
+import SocketServer
 
 key = ""
 auth_file = '.credentials'
 build_folder = "_build/html"
 
-class AuthHandler(SimpleHTTPRequestHandler):
+class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_HEAD(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -30,7 +31,7 @@ class AuthHandler(SimpleHTTPRequestHandler):
             self.wfile.write('Credentials required.')
             pass
         elif self.headers.getheader('Authorization') == 'Basic '+key:
-            SimpleHTTPRequestHandler.do_GET(self)
+            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
             pass
         else:
             self.do_AUTHHEAD()
@@ -39,7 +40,9 @@ class AuthHandler(SimpleHTTPRequestHandler):
 
 def test(HandlerClass = AuthHandler,
          ServerClass = BaseHTTPServer.HTTPServer):
-    BaseHTTPServer.test(HandlerClass, ServerClass)
+                BaseHTTPServer.test(HandlerClass, ServerClass)
+
+
 
 
 @contextmanager
@@ -96,10 +99,15 @@ if __name__ == "__main__":
         sys.argv = ["nouser", "8000"]
         auth = ""
 
-        with open(auth_file) as f:
-            auth = f.readlines()
-            auth = auth[0].rstrip()
+        if os.path.isfile(auth_file) :
+            with open(auth_file) as f:
+                auth = f.readlines()
+                auth = auth[0].rstrip()
 
-        key = base64.b64encode(auth)
-        with pushd(dest_dir):
-            test()
+            key = base64.b64encode(auth)
+            with pushd(dest_dir):
+                test()
+        else:
+            Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+            httpd = SocketServer.TCPServer(("", 8000), Handler)
+            httpd.serve_forever()
