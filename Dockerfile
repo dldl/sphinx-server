@@ -10,10 +10,11 @@ RUN apk add --no-cache --virtual --update py-pip make wget ca-certificates ttf-d
 
     wget http://downloads.sourceforge.net/project/plantuml/plantuml.jar -P /opt/
 
-COPY ./server.py /opt/
+COPY ./server.py /opt/sphinx-server/
+COPY ./.sphinx-server.yml /opt/sphinx-server/
 
 WORKDIR /web
 
 EXPOSE 8000 35729
 
-CMD ["python", "/opt/server.py"]
+CMD ["python", "/opt/sphinx-server/server.py"]
