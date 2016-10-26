@@ -1,7 +1,7 @@
 Config:
   autobuild: false
   credentials:
-    password: Test
-    username: essai
+    password: ~
+    username: ~
   ignore:
     - .git/
