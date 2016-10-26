@@ -14,7 +14,6 @@ image based on Alpine.
 
 - This image is not bundled with latex but you can generate *.tex* files and compile
   them outside of the container
-- Authentication can not be disabled for now
 
 ## Installation
 
@@ -39,9 +38,9 @@ docker build -t dldl/sphinx-server .
 
 ## Usage
 
-Add a *.credentials* file at the root of your project following the
-`username:password` syntax to enable HTTP authentication to restrict access to
-the documentation.
+Add a *.sphinx-server.yml* file at the root of your project if you want to use a
+custom configuration. You can see the *.sphinx-server.yml* file on this
+repository to learn more on how to configure your server.
 
 ### Container creation
 
@@ -57,14 +56,11 @@ needs. All the files in the current directory will be mount in the container.
 **Development mode:**
 
 ```sh
-docker run -itd -v "$(pwd)":/web -p 35729:35729 -p 8000:8000 -e ENV=dev --name sphinx-server dldl/sphinx-server
+docker run -itd -v "$(pwd)":/web -p 35729:35729 -p 8000:8000 --name sphinx-server dldl/sphinx-server
 ```
 
 A websocket will be listening on `35729` port to automatically refresh the pages
 after a change.
-
-The web server will be listening on `8000` port. All the files in the current
-directory will be mount in the container.
 
 ### Interacting with the server
 
