@@ -1,7 +1,6 @@
-Config:
-  autobuild: false
-  credentials:
-    password: ~
-    username: ~
-  ignore:
-    - .git/
+autobuild: false
+credentials:
+  password: ~
+  username: ~
+ignore:
+  - .git/
