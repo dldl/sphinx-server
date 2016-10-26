@@ -10,10 +10,10 @@ RUN apk add --no-cache --virtual --update py-pip make wget ca-certificates ttf-d
 
     wget http://downloads.sourceforge.net/project/plantuml/plantuml.jar -P /opt/
 
-WORKDIR /web
+COPY ./server.py /opt/
 
-COPY ./server.py .
+WORKDIR /web
 
 EXPOSE 8000 35729
 
-CMD ["python", "./server.py"]
+CMD ["python", "/opt/server.py"]
