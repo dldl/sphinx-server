@@ -39,7 +39,10 @@ class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.wfile.write('Credentials required.')
             pass
 
-
+'''
+This function is used to simulate the manipulation of the stack (like pushd and popd in BASH)
+and change the folder with the usage of the context manager
+'''
 @contextmanager
 def pushd(new_dir):
     previous_dir = os.getcwd()
