@@ -97,6 +97,7 @@ if __name__ == '__main__':
             with pushd(build_folder):
                 BaseHTTPServer.test(AuthHandler, BaseHTTPServer.HTTPServer)
         else:
-            Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-            httpd = SocketServer.TCPServer(('', 8000), Handler)
-            httpd.serve_forever()
+            with pushd(build_folder):
+                Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+                httpd = SocketServer.TCPServer(('', 8000), Handler)
+                httpd.serve_forever()
