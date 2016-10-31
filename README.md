@@ -1,5 +1,7 @@
 # Sphinx-Server
 
+[![](https://images.microbadger.com/badges/image/dldl/sphinx-server.svg)](https://microbadger.com/images/dldl/sphinx-server)
+
 Sphinx-Server allows you to build *Sphinx documentation* using a Docker
 image based on Alpine.
 
