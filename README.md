@@ -4,7 +4,7 @@ Sphinx-Server allows you to build *Sphinx documentation* using a Docker
 image based on Alpine.
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/dldl/sphinx-server.svg)](https://hub.docker.com/r/dldl/sphinx-server/)
-[![Docker Automated buil](https://img.shields.io/docker/automated/dldl/sphinx-server.svg)](https://hub.docker.com/r/dldl/sphinx-server/)
+[![Docker Automated build](https://img.shields.io/docker/automated/dldl/sphinx-server.svg)](https://hub.docker.com/r/dldl/sphinx-server/)
 
 **Functionnalities:**
 
