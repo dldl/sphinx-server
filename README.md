@@ -30,6 +30,13 @@ Pull the image from Docker Hub using:
 docker pull dldl/sphinx-server
 ```
 
+If you only want to compile files without using the server, you can use the
+following command (for example) at the root of your documentation:
+
+```sh
+docker run -t -v "$(pwd)":/web dldl/sphinx-server make html
+```
+
 ### From source
 
 Clone this repository on your computer and build the image using the following
