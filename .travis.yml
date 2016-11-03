@@ -7,9 +7,9 @@ services:
 
 install:
   - docker build -t server-image .
-  - docker run -itd -v "$(pwd)":/web -p 8000:8000 --name sphinx-server image-server
+  - docker run -itd -v "$(pwd)":/web -p 8000:8000 --name sphinx-server server-image
 
 script:
-  - docker ps | grep -q image-server
+  - docker ps | grep -q sphinx-server
   - docker exec -it sphinx-server sphinx-quickstart -q -p test -a tester -v 0.1
   - docker exec -it sphinx-server make html
