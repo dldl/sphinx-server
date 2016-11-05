@@ -18,7 +18,7 @@ image based on Alpine.
 
 **Limitations:**
 
-- This image is not bundled with LaTex but you can generate *.tex* files and
+- This image is not bundled with LaTeX but you can generate *.tex* files and
   compile them outside of the container
 
 ## Installation
