@@ -13,7 +13,6 @@ script:
   - docker ps | grep -q sphinx-server
   - docker exec -it sphinx-server sphinx-quickstart -q -p test -a tester -v 0.1
   - docker exec -it sphinx-server make html
-  - sleep 1
-  - curl -O http://localhost:8000/index.html
+  - curl -O --retry 5 http://localhost:8000/index.html
   - grep -q "Welcome to test’s documentation!" index.html
   - docker exec -it sphinx-server plantuml -v
