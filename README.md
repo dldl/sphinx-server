@@ -20,7 +20,7 @@ image based on Alpine.
 
 - This image is not bundled with LaTeX but you can generate *.tex* files and
   compile them outside of the container
-- Not support custom port on dev mode
+- It is not possible to customize ports with autobuild enabled
 
 ## Installation
 
@@ -79,8 +79,8 @@ Run the following command at the root of your documentation:
 docker run -itd -v "$(pwd)":/web -u $(id -u):$(id -g) -p 35729:35729 -p 8000:8000 --name sphinx-server dldl/sphinx-server
 ```
 
-The web server will be listening on port `8000`. Of course, you can change it to
-your needs. All the files in the current directory will be mount in the
+The web server will be listening on port `8000`. You should not change it or autobuild
+will no longer works. All the files in the current directory will be mount in the
 container. A websocket will be listening on port `35729` to automatically
 refresh the pages after a change.
 
