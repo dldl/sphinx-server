@@ -75,7 +75,7 @@ Add a *.sphinx-server.yml* file at the root of your project documentation with
 Run the following command at the root of your documentation:
 
 ```sh
-docker run -itd -v "$(pwd)":/web -p 35729:35729 -p 8000:8000 --name sphinx-server dldl/sphinx-server
+docker run -itd -v "$(pwd)":/web -u $(id -u):$(id -g) -p 35729:35729 -p 8000:8000 --name sphinx-server dldl/sphinx-server
 ```
 
 The web server will be listening on port `8000`. Of course, you can change it to
