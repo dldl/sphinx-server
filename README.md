@@ -20,6 +20,7 @@ image based on Alpine.
 
 - This image is not bundled with LaTeX but you can generate *.tex* files and
   compile them outside of the container
+- Not support custom port on dev mode
 
 ## Installation
 
