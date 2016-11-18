@@ -13,6 +13,8 @@ script:
   - docker ps | grep -q sphinx-server
   - docker exec -it sphinx-server sphinx-quickstart -q -p test -a tester -v 0.1
   - docker exec -it sphinx-server make html
+  - echo "The following arp entry will be cleaned because of a Docker-related issue"
+  - docker exec -it arp -d 172.17.0.2
   - curl -O http://localhost:8000/index.html
   - grep -q "Welcome to test’s documentation!" index.html
   - docker exec -it sphinx-server plantuml -v
