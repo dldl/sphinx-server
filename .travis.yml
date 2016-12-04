@@ -10,8 +10,6 @@ sudo: true
 install:
   - docker build -t server-image .
   - docker run -itd -v "$(pwd)":/web -p 8000:8000 --name sphinx-server server-image
-  - echo "The following line is due to a Docker network issue but should not be required." 
-  - sudo arp -d 172.17.0.2
 
 script:
   - docker ps | grep -q sphinx-server
