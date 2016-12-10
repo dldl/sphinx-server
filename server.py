@@ -55,11 +55,12 @@ if __name__ == '__main__':
 
     key = ''
     config_file = '.sphinx-server.yml'
+    install_folder = '/opt/sphinx-server/'
     build_folder = os.path.realpath('_build/html')
     source_folder = os.path.realpath('.')
     configuration = None
 
-    with open(config_file, 'r') as config_stream:
+    with open(install_folder + config_file, 'r') as config_stream:
         configuration = yaml.load(config_stream)
 
         if os.path.isfile(source_folder + '/' + config_file):
