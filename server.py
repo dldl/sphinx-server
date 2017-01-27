@@ -71,10 +71,15 @@ if __name__ == '__main__':
         os.makedirs(build_folder)
 
     if configuration.get('autobuild'):
+
+        ignored_files = []
+        for ig in configuration.get('ignore'):
+            ignored_files.append(os.path.realpath(ig))
+
         builder = sphinx_autobuild.SphinxBuilder(
             outdir=build_folder,
             args=['-b', 'html', source_folder, build_folder],
-            ignored=configuration.get('ignore'),
+            ignored=ignored_files,
             regex_ignored=configuration.get('ignore_regex')
         )
 
