@@ -1,9 +1,14 @@
 # Set autobuild to true if you want to enable compilation when a file changes.
 # This will disable http authentication.
-autobuild: false
+autobuild: true
 # Add files and folders you want autobuild watcher to ignore on changes.
 ignore:
-  - .git/
+  - .git
+
+#If you want to use a regex instead of provide name
+ignore_regex:
+
+
 # Add a username and a password if you want to enable http authentication.
 # This will not work if autobuild is enabled.
 credentials:

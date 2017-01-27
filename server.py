@@ -74,7 +74,8 @@ if __name__ == '__main__':
         builder = sphinx_autobuild.SphinxBuilder(
             outdir=build_folder,
             args=['-b', 'html', source_folder, build_folder],
-            ignored=configuration.get('ignore')
+            ignored=configuration.get('ignore'),
+            regex_ignored=configuration.get('ignore_regex')
         )
 
         server = Server(watcher=sphinx_autobuild.LivereloadWatchdogWatcher())
@@ -86,7 +87,8 @@ if __name__ == '__main__':
         server.serve(port=8000, host='0.0.0.0', root=build_folder)
     else:
         # Building once when server starts
-        builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder, args=['-b', 'html', source_folder, build_folder])
+        builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder,
+                                                 args=['-b', 'html', source_folder, build_folder])
         builder.build()
 
         sys.argv = ['nouser', '8000']
