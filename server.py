@@ -73,8 +73,8 @@ if __name__ == '__main__':
     if configuration.get('autobuild'):
 
         ignored_files = []
-        for ig in configuration.get('ignore'):
-            ignored_files.append(os.path.realpath(ig))
+        for path in configuration.get('ignore'):
+            ignored_files.append(os.path.realpath(path))
 
         builder = sphinx_autobuild.SphinxBuilder(
             outdir=build_folder,
@@ -92,8 +92,7 @@ if __name__ == '__main__':
         server.serve(port=8000, host='0.0.0.0', root=build_folder)
     else:
         # Building once when server starts
-        builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder,
-                                                 args=['-b', 'html', source_folder, build_folder])
+        builder = sphinx_autobuild.SphinxBuilder(outdir=build_folder, args=['-b', 'html', source_folder, build_folder])
         builder.build()
 
         sys.argv = ['nouser', '8000']
