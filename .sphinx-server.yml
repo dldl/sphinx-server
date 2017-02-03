@@ -6,9 +6,8 @@ autobuild: false
 ignore:
   - .git
 
-#You can also use regex to ignore specific type of files and folders.
+# You can also use regex to ignore specific types of file and folders.
 ignore_regex:
-
 
 # Add a username and a password if you want to enable http authentication.
 # This will not work if autobuild is enabled.
