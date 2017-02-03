@@ -4,16 +4,25 @@ import sys
 from contextlib import contextmanager
 import base64
 from livereload import Server
-import BaseHTTPServer
-import SimpleHTTPServer
-import SocketServer
+from httpy import HTTPServer
+from SimpleHTTPServer import SimpleHTTPRequestHandler
 import yaml
 
+key = ''
+previous_dir = ''
+run = True
+httpd = HTTPServer
 
-class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class AuthHandler(SimpleHTTPRequestHandler):
     """
     Authentication handler used to support HTTP authentication
     """
+
+    def reload(self):
+        httpd.stop()
+        os.chdir(previous_dir)
+        server()
+
     def do_HEAD(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -26,8 +35,13 @@ class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        global key
-        if self.headers.getheader('Authorization') is None:
+        print self
+        if self.path == '/reload' or self.path == '/reload/':
+                self.send_response(200)  # OK
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                self.reload()
+        elif self.headers.getheader('Authorization') is None:
             self.do_AUTHHEAD()
             self.wfile.write('Credentials required.')
             pass
@@ -45,22 +59,28 @@ and change the folder with the usage of the context manager
 '''
 @contextmanager
 def pushd(new_dir):
+    global previous_dir
     previous_dir = os.getcwd()
     os.chdir(new_dir)
     yield
     os.chdir(previous_dir)
 
 
-if __name__ == '__main__':
+def _serve(self):
+    while self.run:
+        self.httpd.handle_request()
 
-    key = ''
+
+def server():
+
+    global httpd
     config_file = '.sphinx-server.yml'
     install_folder = '/opt/sphinx-server/'
     build_folder = os.path.realpath('_build/html')
     source_folder = os.path.realpath('.')
     configuration = None
 
-    with open(install_folder + config_file, 'r') as config_stream:
+    with open(config_file, 'r') as config_stream:
         configuration = yaml.load(config_stream)
 
         if os.path.isfile(source_folder + '/' + config_file):
@@ -99,12 +119,16 @@ if __name__ == '__main__':
 
         if configuration.get('credentials')['username'] is not None:
             auth = configuration.get('credentials')['username'] + ':' + configuration.get('credentials')['password']
+            global key
             key = base64.b64encode(auth)
 
             with pushd(build_folder):
-                BaseHTTPServer.test(AuthHandler, BaseHTTPServer.HTTPServer)
+                httpd = HTTPServer(port=8000,handler=AuthHandler)
+                httpd.start()
         else:
             with pushd(build_folder):
-                Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-                httpd = SocketServer.TCPServer(('', 8000), Handler)
-                httpd.serve_forever()
+                httpd = HTTPServer(port=8000)
+                httpd.start()
+
+if __name__ == '__main__':
+    server()
