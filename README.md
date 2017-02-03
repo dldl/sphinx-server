@@ -71,8 +71,8 @@ docker run -itd -v "$(pwd)":/web -p 8000:8000 --name sphinx-server dldl/sphinx-s
 **With autobuild enabled:**
 
 Add a *.sphinx-server.yml* file at the root of your project documentation with
-`autobuild` set to true. You may add folders and files to the `ignore` list. You can also use
-a regex to ignore files or folders.
+`autobuild` set to true. You may add folders and files to the `ignore` list. You can
+also use regular expressions to ignore files or folders using the `ignore_regex` list.
 
 Run the following command at the root of your documentation:
 
