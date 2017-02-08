@@ -79,8 +79,7 @@ if __name__ == '__main__':
         builder = sphinx_autobuild.SphinxBuilder(
             outdir=build_folder,
             args=['-b', 'html', source_folder, build_folder],
-            ignored=ignored_files,
-            regex_ignored=configuration.get('ignore_regex')
+            ignored=ignored_files
         )
 
         server = Server(watcher=sphinx_autobuild.LivereloadWatchdogWatcher())
