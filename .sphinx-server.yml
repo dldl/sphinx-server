@@ -1,6 +1,6 @@
-# Set autobuild to true if you want to enable compilation when a file changes.
-# This will disable http authentication.
-autobuild: false
+# Set autobuild to false if you do not want to enable compilation when a file changes.
+# This will enable http authentication if credentials section is filled.
+autobuild: true
 
 # Add files and folders you want autobuild watcher to ignore on changes.
 ignore:

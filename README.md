@@ -20,7 +20,7 @@ image based on Alpine.
 
 - This image is not bundled with LaTeX but you can generate *.tex* files and
   compile them outside of the container
-- It is not possible to customize ports with autobuild enabled
+- It is not possible to customize ports when autobuild is enabled
 
 ## Installation
 
@@ -60,7 +60,8 @@ yours.
 **Without autobuild (production mode):**
 
 If you want to enable HTTP authentication, just add a *.sphinx-server.yml* file
-at the root of your project documentation and add a `credentials` section.
+at the root of your project documentation and add a `credentials` section. You
+also need to set `autobuild` to false.
 
 Run the following command at the root of your documentation:
 
@@ -70,8 +71,7 @@ docker run -itd -v "$(pwd)":/web -p 8000:8000 --name sphinx-server dldl/sphinx-s
 
 **With autobuild enabled:**
 
-Add a *.sphinx-server.yml* file at the root of your project documentation with
-`autobuild` set to true. You may add folders and files to the `ignore` list.
+Autobuild is enabled by default. You may add folders and files to the `ignore` list.
 
 Run the following command at the root of your documentation:
 
