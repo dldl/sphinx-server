@@ -1,4 +1,4 @@
-FROM alpine:3.5
+FROM alpine:3.8
 
 MAINTAINER Loïc Pauletto <loic.pauletto@gmail.com>
 MAINTAINER Quentin de Longraye <quentin@dldl.fr>
