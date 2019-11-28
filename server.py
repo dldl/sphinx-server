@@ -4,13 +4,13 @@ import sys
 from contextlib import contextmanager
 import base64
 from livereload import Server
-import BaseHTTPServer
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import http.server
+import socketserver
 import yaml
 
 
-class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class AuthHandler(http.server.SimpleHTTPRequestHandler):
     """
     Authentication handler used to support HTTP authentication
     """
@@ -32,7 +32,7 @@ class AuthHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.wfile.write('Credentials required.')
             pass
         elif self.headers.getheader('Authorization') == 'Basic ' + key:
-            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+            http.server.SimpleHTTPRequestHandler.do_GET(self)
             pass
         else:
             self.do_AUTHHEAD()
@@ -101,9 +101,9 @@ if __name__ == '__main__':
             key = base64.b64encode(auth)
 
             with pushd(build_folder):
-                BaseHTTPServer.test(AuthHandler, BaseHTTPServer.HTTPServer)
+                http.server.test(AuthHandler, http.server.HTTPServer)
         else:
             with pushd(build_folder):
-                Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-                httpd = SocketServer.TCPServer(('', 8000), Handler)
+                Handler = http.server.SimpleHTTPRequestHandler
+                httpd = socketserver.TCPServer(('', 8000), Handler)
                 httpd.serve_forever()
