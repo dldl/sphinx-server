@@ -27,16 +27,16 @@ class AuthHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         global key
-        if self.headers.getheader('Authorization') is None:
+        if self.headers.get('Authorization') is None:
             self.do_AUTHHEAD()
-            self.wfile.write('Credentials required.')
+            self.wfile.write('Credentials required.'.encode('utf-8'))
             pass
-        elif self.headers.getheader('Authorization') == 'Basic ' + key:
+        elif self.headers.get('Authorization') == 'Basic ' + key.decode('utf-8'):
             http.server.SimpleHTTPRequestHandler.do_GET(self)
             pass
         else:
             self.do_AUTHHEAD()
-            self.wfile.write('Credentials required.')
+            self.wfile.write('Credentials required.'.encode('utf-8'))
             pass
 
 '''
@@ -61,11 +61,11 @@ if __name__ == '__main__':
     configuration = None
 
     with open(install_folder + config_file, 'r') as config_stream:
-        configuration = yaml.load(config_stream)
+        configuration = yaml.safe_load(config_stream)
 
         if os.path.isfile(source_folder + '/' + config_file):
             with open(source_folder + '/' + config_file, "r") as custom_stream:
-                configuration.update(yaml.load(custom_stream))
+                configuration.update(yaml.safe_load(custom_stream))
 
     if not os.path.exists(build_folder):
         os.makedirs(build_folder)
@@ -98,7 +98,7 @@ if __name__ == '__main__':
 
         if configuration.get('credentials')['username'] is not None:
             auth = configuration.get('credentials')['username'] + ':' + configuration.get('credentials')['password']
-            key = base64.b64encode(auth)
+            key = base64.b64encode(auth.encode('utf-8'))
 
             with pushd(build_folder):
                 http.server.test(AuthHandler, http.server.HTTPServer)
